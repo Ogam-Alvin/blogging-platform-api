@@ -14,6 +14,7 @@ from pathlib import Path
 from decouple import config
 from datetime import timedelta
 import dj_database_url
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,9 +27,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='unsafe-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'blogging-platform-api-3de2cf913e7c.herokuapp.com',
+    'localhost',
+    '127.0.0.1'
+    ]
 
 
 # Application definition
@@ -49,14 +54,16 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 ROOT_URLCONF = "blogging_api.urls"
 
@@ -83,9 +90,10 @@ WSGI_APPLICATION = "blogging_api.wsgi.application"
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL')
+        default=os.environ.get('DATABASE_URL')
     )
 }
+
 
 
 
@@ -126,6 +134,7 @@ USE_TZ = True
 # settings.py
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATIC_URL = '/static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 REST_FRAMEWORK = {
